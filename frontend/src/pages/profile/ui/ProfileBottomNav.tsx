@@ -21,13 +21,13 @@ export const ProfileBottomNav = ({ onNavigate }: ProfileBottomNavProps) => {
           <LayoutDashboard className="w-6 h-6" />
           <span className="text-xs">대시보드</span>
         </button>
-        {/* ✅ 기능 버튼 - AI 상담 앞으로 이동 */}
+        {/* ✅ 추천받기 버튼 - AI 상담 앞으로 이동 */}
         <button
           onClick={() => onNavigate?.('features')}
           className="flex flex-col items-center space-y-1 text-gray-500 hover:text-pink-600 transition-colors"
         >
           <Sparkles className="w-6 h-6" />
-          <span className="text-xs">기능</span>
+          <span className="text-xs">추천받기</span>
         </button>
         <button
           onClick={() => onNavigate?.('chat')}

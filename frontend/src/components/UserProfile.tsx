@@ -37,7 +37,7 @@ import DashboardBottomNav from './dashboard/DashboardBottomNav';
 export interface UserProfileProps {
   onNavigate?: (page: string) => void;
   onLogout?: () => void;
-  currentPage?: string;  // ← 추가
+  currentPage?: string; // ← 추가
 }
 
 type TabType = 'activity' | 'ingredients';
@@ -111,7 +111,11 @@ const BubbleAnimation = () => {
   );
 };
 
-export default function UserProfile({ onNavigate, onLogout, currentPage = 'profile' }: UserProfileProps) {
+export default function UserProfile({
+  onNavigate,
+  onLogout,
+  currentPage = 'profile',
+}: UserProfileProps) {
   const name = useUserStore(state => state.name);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -316,8 +320,10 @@ export default function UserProfile({ onNavigate, onLogout, currentPage = 'profi
       setIngLoading(true);
       try {
         const res = await fetch(`${API_BASE}/ingredients/list_all?limit=5000`);
+
         if (res.ok) {
           const raw = await res.json();
+          console.log('raw', raw);
           const cleaned: Ingredient[] = (raw || [])
             .map((r: any) => ({
               id: Number(r.id),
@@ -868,6 +874,7 @@ export default function UserProfile({ onNavigate, onLogout, currentPage = 'profi
                       placeholder="한글/영문/설명으로 검색"
                       className="w-full px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
                     />
+                    {'erpogkeoprgkergpoerkgeoper'}
                     {ingLoading && (
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         <WaterDropletLoader />

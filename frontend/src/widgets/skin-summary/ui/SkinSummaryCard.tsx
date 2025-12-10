@@ -50,7 +50,7 @@ export const SkinSummaryCard = ({
           <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-500">
             <Star size={18} />
           </span>
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">피부 요약</h2>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900">내 피부 MBTI</h2>
         </div>
         <p className="text-sm text-gray-500 mt-2 pl-[2.5rem]">
           최근 진단을 기반으로 한 바우만 타입과 주요 축 지표입니다.

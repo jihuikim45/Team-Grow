@@ -1,10 +1,10 @@
-import * as React from "react";
-import { useEffect, useState } from "react";
-import { API_BASE } from "../../lib/env";
+import * as React from 'react';
+import { useEffect, useState } from 'react';
+import { API_BASE } from '../../lib/env';
 
-type Interval = "all";
-type Gender = "all" | "female" | "male" | "other" | "na";
-type AgeBand = "all" | "10s" | "20s" | "30s" | "40s" | "50s" | "60s_plus";
+type Interval = 'all';
+type Gender = 'all' | 'female' | 'male' | 'other' | 'na';
+type AgeBand = 'all' | '10s' | '20s' | '30s' | '40s' | '50s' | '60s_plus';
 
 interface Axes {
   OD: { O: number; D: number };
@@ -29,16 +29,23 @@ interface Props {
 
 // 축별 컬러(왼/오)
 const AXIS_COLORS = {
-  OD: { L: "#06b6d4", R: "#e5e7eb" }, // OILY vs DRY
-  SR: { L: "#f472b6", R: "#e5e7eb" }, // SENSITIVE vs RESISTANCE
-  PN: { L: "#a78bfa", R: "#e5e7eb" }, // NON-PIGMENTED vs PIGMENTED
-  WT: { L: "#34d399", R: "#e5e7eb" }, // TIGHT vs WRINKLED
+  OD: { L: '#06b6d4', R: '#e5e7eb' }, // OILY vs DRY
+  SR: { L: '#f472b6', R: '#e5e7eb' }, // SENSITIVE vs RESISTANCE
+  PN: { L: '#a78bfa', R: '#e5e7eb' }, // NON-PIGMENTED vs PIGMENTED
+  WT: { L: '#34d399', R: '#e5e7eb' }, // TIGHT vs WRINKLED
 };
 
 function DualBar({
-  leftPct, rightPct, leftLabel, rightLabel, colors,
+  leftPct,
+  rightPct,
+  leftLabel,
+  rightLabel,
+  colors,
 }: {
-  leftPct: number; rightPct: number; leftLabel: string; rightLabel: string;
+  leftPct: number;
+  rightPct: number;
+  leftLabel: string;
+  rightLabel: string;
   colors: { L: string; R: string };
 }) {
   return (
@@ -52,7 +59,9 @@ function DualBar({
         <div style={{ width: `${rightPct}%`, backgroundColor: colors.R }} />
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <span className="text-sm font-semibold" style={{ color: colors.L }}>{Math.round(leftPct)}%</span>
+        <span className="text-sm font-semibold" style={{ color: colors.L }}>
+          {Math.round(leftPct)}%
+        </span>
         <span className="text-sm font-semibold text-gray-500">{Math.round(rightPct)}%</span>
       </div>
     </div>
@@ -67,24 +76,27 @@ export default function FourAxisSummary({ interval, gender, ageBand, className }
   useEffect(() => {
     let alive = true;
     (async () => {
-      setLoading(true); setErr(null);
+      setLoading(true);
+      setErr(null);
       try {
         const url = `${API_BASE}/api/stats/axis-summary?interval=${interval}&gender=${gender}&age_band=${ageBand}`;
-        const res = await fetch(url, { cache: "no-store" });
+        const res = await fetch(url, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json: Resp = await res.json();
         if (alive) setData(json);
-      } catch (e:any) {
-        if (alive) setErr(e.message ?? "fetch failed");
+      } catch (e: any) {
+        if (alive) setErr(e.message ?? 'fetch failed');
       } finally {
         if (alive) setLoading(false);
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, [interval, gender, ageBand]);
 
   if (loading) return <div className={className}>불러오는 중…</div>;
-  if (err) return <div className={(className ?? "") + " text-red-500"}>데이터 오류: {err}</div>;
+  if (err) return <div className={(className ?? '') + ' text-red-500'}>데이터 오류: {err}</div>;
 
   return (
     <div className={className}>
@@ -95,24 +107,37 @@ export default function FourAxisSummary({ interval, gender, ageBand, className }
       ) : (
         <>
           <div className="text-sm text-gray-500 mb-3">
-            보기조건 — 성별: <b>{gender}</b>, 연령대: <b>{ageBand}</b> · 표본 수: <b>{data.total.toLocaleString()}</b>
+            검색 키워드 — 성별: <b>{gender}</b> | 연령대: <b>{ageBand}</b> | 고객수:{' '}
+            <b>{data.total.toLocaleString()}</b>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <DualBar
-              leftPct={data.axes.OD.O} rightPct={data.axes.OD.D}
-              leftLabel="OILY" rightLabel="DRY" colors={AXIS_COLORS.OD}
+              leftPct={data.axes.OD.O}
+              rightPct={data.axes.OD.D}
+              leftLabel="OILY"
+              rightLabel="DRY"
+              colors={AXIS_COLORS.OD}
             />
             <DualBar
-              leftPct={data.axes.SR.S} rightPct={data.axes.SR.R}
-              leftLabel="SENSITIVE" rightLabel="RESISTANCE" colors={AXIS_COLORS.SR}
+              leftPct={data.axes.SR.S}
+              rightPct={data.axes.SR.R}
+              leftLabel="SENSITIVE"
+              rightLabel="RESISTANCE"
+              colors={AXIS_COLORS.SR}
             />
             <DualBar
-              leftPct={data.axes.PN.N} rightPct={data.axes.PN.P}
-              leftLabel="NON-PIGMENTED" rightLabel="PIGMENTED" colors={AXIS_COLORS.PN}
+              leftPct={data.axes.PN.N}
+              rightPct={data.axes.PN.P}
+              leftLabel="NON-PIGMENTED"
+              rightLabel="PIGMENTED"
+              colors={AXIS_COLORS.PN}
             />
             <DualBar
-              leftPct={data.axes.WT.T} rightPct={data.axes.WT.W}
-              leftLabel="TIGHT" rightLabel="WRINKLED" colors={AXIS_COLORS.WT}
+              leftPct={data.axes.WT.T}
+              rightPct={data.axes.WT.W}
+              leftLabel="TIGHT"
+              rightLabel="WRINKLED"
+              colors={AXIS_COLORS.WT}
             />
           </div>
         </>

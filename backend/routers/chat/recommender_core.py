@@ -421,16 +421,24 @@ def rdb_filter(
 
     sql = text(
         f"""
-        SELECT p.pid, p.brand, p.product_name, p.price_krw, p.category, p.rag_text,
-               p.image_url, p.product_url, p.ingredients
+        SELECT p.pid, 
+            MAX(p.brand) as brand,
+            MAX(p.product_name) as product_name,
+            MAX(p.price_krw) as price_krw,
+            MAX(p.category) as category,
+            MAX(p.rag_text) as rag_text,
+            MAX(p.image_url) as image_url,
+            MAX(p.product_url) as product_url,
+            MAX(p.ingredients) as ingredients,
+            MAX(p.review_count) as review_count
         FROM product_data_chain AS p
         LEFT JOIN product_ingredient_map AS m ON m.product_pid = p.pid
         WHERE {where_sql}
-        GROUP BY p.pid, p.brand, p.product_name, p.price_krw, p.category, p.rag_text, p.ingredients
+        GROUP BY p.pid
         {having_clause}
-        {order_sql}
+        ORDER BY review_count DESC, p.pid ASC
         LIMIT :limit
-    """
+        """
     )
     if "pids" in params:
         binds.append(bindparam("pids", expanding=True))

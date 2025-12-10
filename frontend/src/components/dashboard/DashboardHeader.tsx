@@ -71,7 +71,7 @@ export default function DashboardHeader({
                   : { color: '#6b7280' }
               }
             >
-              <Sparkles className="w-5 h-5" /> <span>기능</span>
+              <Sparkles className="w-5 h-5" /> <span>추천받기</span>
             </button>
             <button
               onClick={() => onNavigate?.('chat')}
@@ -164,7 +164,7 @@ export default function DashboardHeader({
                   : { color: '#6b7280' }
               }
             >
-              <Sparkles className="w-5 h-5" /> <span>기능</span>
+              <Sparkles className="w-5 h-5" /> <span>추천받기</span>
             </button>
             <button
               onClick={() => {

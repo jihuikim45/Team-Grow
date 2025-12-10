@@ -43,9 +43,9 @@ export default function BaumannAnalysis({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="bg-white rounded-2xl shadow-lg p-4 sm:p-6"
+      className="bg-white rounded-2xl"
     >
-      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4 flex items-center">
+      <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 mt-15 sm:mb-4 flex items-cente">
         <LineChart className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500 mr-2" />
         바우만 피부 분석
       </h3>
@@ -98,7 +98,7 @@ export default function BaumannAnalysis({
       </div>
 
       {/* 타입 결과 */}
-      <div className="mt-3 sm:mt-4 p-3 sm:p-4 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-between gap-3">
+      <div className="mt-3 sm:mt-4 p-3 sm:p-4 rounded-xl bg-pink-100 text-pink-700 flex items-center justify-between gap-3 mb-10">
         <p className="text-xs sm:text-xs">
           <span className="font-semibold text-pink-700">당신의 타입: {code}</span>
           <span className="text-gray-600 block sm:inline sm:ml-2 mt-1 sm:mt-0">

@@ -11,15 +11,11 @@ export interface IngredientSearchSectionProps {
 }
 
 export const IngredientSearchSection = ({ onAddIngredient }: IngredientSearchSectionProps) => {
-  const { 
-    ingredients, 
-    isLoading, 
-    searchQuery, 
-    setSearchQuery,
-    hasMore,
-    loadMore,
-  } = useIngredients();
-  
+  const { ingredients, isLoading, searchQuery, setSearchQuery, hasMore, loadMore } =
+    useIngredients();
+
+  console.log('ingredients', ingredients);
+
   const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,8 +55,8 @@ export const IngredientSearchSection = ({ onAddIngredient }: IngredientSearchSec
           </div>
 
           <div className="text-xs text-gray-500">
-            💡 성분명을 입력하면 자동완성 목록이 나타납니다. 원하는 성분을 클릭하여
-            선호/주의 성분으로 추가하세요.
+            💡 성분명을 입력하면 자동완성 목록이 나타납니다. 원하는 성분을 클릭하여 선호/주의
+            성분으로 추가하세요.
           </div>
         </div>
       </Card>

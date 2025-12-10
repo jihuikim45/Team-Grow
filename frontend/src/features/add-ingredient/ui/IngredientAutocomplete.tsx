@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Ingredient } from '@/entities/ingredient';
 import { cn } from '@/shared/lib/utils';
+import { highlightText } from '@/shared/lib/highlightText';
 
 export interface IngredientAutocompleteProps {
   value: string;
@@ -31,7 +32,8 @@ export const IngredientAutocomplete = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  const showSuggestions = isFocused && value.trim().length > 0 && suggestions.length > 0;
+  console.log('suggestions', suggestions);
+  const showSuggestions = isFocused && value.trim().length > 0 && suggestions?.length > 0;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -56,7 +58,7 @@ export const IngredientAutocomplete = ({
     const handleScroll = () => {
       if (!listRef.current) return;
       const { scrollTop, scrollHeight, clientHeight } = listRef.current;
-      
+
       // 바닥에서 50px 이내로 스크롤하면 더 로드
       if (scrollHeight - scrollTop - clientHeight < 50 && !isLoading) {
         onLoadMore();
@@ -152,10 +154,12 @@ export const IngredientAutocomplete = ({
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-800 text-sm truncate">
-                        {ingredient.korean_name}
+                        {highlightText(ingredient.korean_name, value)}
                       </p>
                       {ingredient.english_name && (
-                        <p className="text-xs text-gray-500 truncate">{ingredient.english_name}</p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {highlightText(ingredient.english_name, value)}
+                        </p>
                       )}
                     </div>
                     {ingredient.caution_grade && (
@@ -175,7 +179,7 @@ export const IngredientAutocomplete = ({
                   </div>
                   {ingredient.description && (
                     <p className="text-xs text-gray-400 mt-1 line-clamp-1">
-                      {ingredient.description}
+                      {highlightText(ingredient.description, value)}
                     </p>
                   )}
                 </button>

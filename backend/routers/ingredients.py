@@ -45,7 +45,8 @@ def search_ingredients(
     q1 = (
         db.query(Ingredient)
         .filter(and_(base, or_(Ingredient.korean_name.like(prefix),
-                               Ingredient.english_name.like(prefix))))
+                               Ingredient.english_name.like(prefix),
+                               Ingredient.description.like(prefix))))
         .options(load_only(
             Ingredient.id, Ingredient.korean_name,
             Ingredient.english_name, Ingredient.description,  # 응답에 싣기 위해 로드
@@ -69,7 +70,8 @@ def search_ingredients(
             .filter(and_(
                 base,
                 or_(Ingredient.korean_name.like(contains),
-                    Ingredient.english_name.like(contains)),
+                    Ingredient.english_name.like(contains),
+                    Ingredient.description.like(contains)),
                 not_(Ingredient.id.in_(picked)) if picked else True,
             ))
             .options(load_only(

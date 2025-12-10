@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { ingredientApi, Ingredient } from '@/entities/ingredient';
 import { debounce } from '@/shared/lib/utils';
 
@@ -7,38 +7,52 @@ export const useIngredients = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [nextCursor, setNextCursor] = useState<number | null>(null);
+  const [nextPage, setNextPage] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  // 현재 검색어 추적 (debounce 내부에서 새 검색 여부 판단용)
+  const currentQueryRef = useRef('');
 
   // 검색 실행 (디바운스)
   const executeSearch = useCallback(
-    debounce(async (query: string, cursor?: number) => {
+    debounce(async (query: string, page: number = 1) => {
       if (!query.trim()) {
         setIngredients([]);
-        setNextCursor(null);
+        setNextPage(null);
         setHasMore(false);
+        setTotal(0);
+        currentQueryRef.current = '';
         return;
+      }
+
+      // 새 검색어인지 확인
+      const isNewSearch = query !== currentQueryRef.current;
+      if (isNewSearch) {
+        currentQueryRef.current = query;
+        page = 1;
       }
 
       setIsLoading(true);
       setError(null);
 
       try {
-        const result = await ingredientApi.search(query, 20, cursor);
-        
-        if (cursor) {
-          // 페이지네이션 - 기존 결과에 추가
-          setIngredients(prev => [...prev, ...result.items]);
-        } else {
+        const result = await ingredientApi.search(query, 20, page);
+
+        if (page === 1) {
           // 새 검색 - 결과 교체
           setIngredients(result.items);
+        } else {
+          // 페이지네이션 - 기존 결과에 추가
+          setIngredients(prev => [...prev, ...result.items]);
         }
-        
-        setNextCursor(result.next_cursor);
-        setHasMore(result.has_more);
+
+        setNextPage(result.nextPage);
+        setHasMore(result.hasMore);
+        setTotal(result.total);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to search ingredients');
-        if (!cursor) {
+        if (page === 1) {
           setIngredients([]);
         }
       } finally {
@@ -50,15 +64,15 @@ export const useIngredients = () => {
 
   // 검색어 변경 시 자동 검색
   useEffect(() => {
-    executeSearch(searchQuery);
+    executeSearch(searchQuery, 1);
   }, [searchQuery, executeSearch]);
 
   // 더 불러오기
   const loadMore = useCallback(() => {
-    if (hasMore && !isLoading && nextCursor) {
-      executeSearch(searchQuery, nextCursor);
+    if (hasMore && !isLoading && nextPage) {
+      executeSearch(searchQuery, nextPage);
     }
-  }, [hasMore, isLoading, nextCursor, searchQuery, executeSearch]);
+  }, [hasMore, isLoading, nextPage, searchQuery, executeSearch]);
 
   // 특정 성분 찾기 (현재 로드된 결과에서)
   const findIngredient = (query: string): Ingredient | undefined => {

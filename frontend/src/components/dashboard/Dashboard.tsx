@@ -13,7 +13,7 @@ import TrendsSection from './TrendsSection';
 import SkinTypeStatsPanel from './SkinTypeStatsPanel';
 
 // 아이콘
-import { TestTube2, Sparkles, ArrowRight, RefreshCcw } from 'lucide-react';
+import { TestTube2, Sparkles, ArrowRight, RefreshCcw, Heart } from 'lucide-react';
 
 export interface DashboardProps {
   userName?: string;
@@ -59,7 +59,7 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
       const axisData = axes?.[ax];
       const confidence = axisData?.confidence ? Math.round(axisData.confidence) : 50;
       const letter = axisData?.letter || '';
-      
+
       // letter가 O/S/P/W면 왼쪽(value 그대로)
       // letter가 D/R/N/T면 오른쪽(100 - value)
       let value = confidence;
@@ -67,7 +67,7 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
       if (ax === 'SR' && letter === 'R') value = 100 - confidence;
       if (ax === 'PN' && letter === 'N') value = 100 - confidence;
       if (ax === 'WT' && letter === 'T') value = 100 - confidence;
-      
+
       return {
         key: ax,
         label: concernLabel[ax],
@@ -84,7 +84,10 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
       const cachedType = localStorage.getItem('skin_type_code');
       const cachedAxes = localStorage.getItem('skin_axes_json');
       if (cachedType) setBaumannType(cachedType);
-      if (cachedAxes) try { setAxes(JSON.parse(cachedAxes)); } catch {}
+      if (cachedAxes)
+        try {
+          setAxes(JSON.parse(cachedAxes));
+        } catch {}
 
       const userIdStr = localStorage.getItem('user_id') ?? '1';
       const id = Number.parseInt(userIdStr, 10);
@@ -117,13 +120,16 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
           // skin_type_code 없으면 빈 문자열
           setBaumannType('');
         }
-        
+
         if (data?.skin_axes_json) {
-          const json = typeof data.skin_axes_json === 'string'
-            ? data.skin_axes_json
-            : JSON.stringify(data.skin_axes_json);
+          const json =
+            typeof data.skin_axes_json === 'string'
+              ? data.skin_axes_json
+              : JSON.stringify(data.skin_axes_json);
           localStorage.setItem('skin_axes_json', json);
-          try { setAxes(JSON.parse(json)); } catch {}
+          try {
+            setAxes(JSON.parse(json));
+          } catch {}
         }
       } catch (err) {
         console.error('Failed to fetch profile:', err);
@@ -147,12 +153,12 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
         <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-2xl bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center mb-5 shadow-lg transform hover:scale-105 transition-transform">
           <TestTube2 className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
         </div>
-        
+
         {/* 제목 */}
         <h3 className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
           피부타입 진단이 필요합니다
         </h3>
-        
+
         {/* 부제 */}
         <p className="text-gray-500 text-sm mb-6">
           3분이면 당신의 피부를 완벽하게 이해할 수 있어요
@@ -205,21 +211,19 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
         </button>
 
         {/* 하단 안내 */}
-        <p className="text-xs text-gray-400 mt-4">
-          약 3~5분 소요 · 무료 · 언제든 다시 진단 가능
-        </p>
+        <p className="text-xs text-gray-400 mt-4">약 3~5분 소요 · 무료 · 언제든 다시 진단 가능</p>
       </div>
     </div>
   );
 
   // ▼ 공용 필터 바(기간 제거: 성별/연령대만)
   const FiltersBar = () => (
-    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+    <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-10">
       <label className="text-xs text-gray-500">성별</label>
       <select
         value={gender}
-        onChange={(e) => setGender(e.target.value as Gender)}
-        className="border rounded-md px-2 py-1 text-sm"
+        onChange={e => setGender(e.target.value as Gender)}
+        className="border rounded-md px-2 py-1 text-sm mt2"
       >
         <option value="all">전체</option>
         <option value="female">여성</option>
@@ -231,8 +235,8 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
       <label className="text-xs text-gray-500 ml-2">연령대</label>
       <select
         value={ageBand}
-        onChange={(e) => setAgeBand(e.target.value as AgeBand)}
-        className="border rounded-md px-2 py-1 text-sm"
+        onChange={e => setAgeBand(e.target.value as AgeBand)}
+        className="border rounded-md px-2 py-1 text-sm mt-1"
       >
         <option value="all">전체</option>
         <option value="10s">10대</option>
@@ -253,7 +257,6 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
       <DashboardHeader userName={userName} onNavigate={onNavigate} currentPage="dashboard" />
 
       <main className="container mx-auto px-4 sm:px-6 py-4 sm:py-8 max-w-7xl">
-
         {/* === 상단: 하나의 대형 카드(2열) === */}
         <section className="rounded-2xl bg-white shadow-sm overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2">
@@ -264,9 +267,8 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
                   code={code}
                   koAxisWord={koAxisWord}
                   concerns={concerns}
-                  selectedPeriod={selectedPeriod}
-                  setSelectedPeriod={setSelectedPeriod}
-                  variant="compact"
+                  pick={pick}
+                  onNavigate={onNavigate}
                 />
               ) : (
                 <DiagnosisNeeded />
@@ -275,30 +277,35 @@ export default function Dashboard({ userName = 'Sarah', onNavigate }: DashboardP
 
             {/* 우측: 분포 패널 */}
             <div className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base sm:text-lg font-semibold">피부 타입 한눈에</h2>
-                <FiltersBar />
+              <div className="mt-2 mb-3">
+                <div className="flex items-center gap-2 mt-2 mb-5">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-pink-500">
+                    <Heart size={18} />
+                  </span>
+                  <h2 className="text-base sm:text-xl font-semibold">
+                    나와 같은 MBTI는 얼마나 될까?
+                  </h2>
+                </div>
               </div>
               <SkinTypeStatsPanel
                 interval="all"
                 gender={gender}
                 ageBand={ageBand}
                 framed={false}
-                userTypeCode={code}   // ← 추가
+                userTypeCode={code}
+                filterBar={<FiltersBar />}
               />
-
             </div>
           </div>
         </section>
 
         {/* ▼ 지금 뜨는 제품 랭킹 */}
-        <div className="mt-6">
+        {/* <div className="mt-6">
           <TrendsSection />
-        </div>
-
+        </div> */}
       </main>
 
-      <DashboardBottomNav onNavigate={onNavigate} currentPage="dashboard" />
+      {/* <DashboardBottomNav onNavigate={onNavigate} currentPage="dashboard" /> */}
     </div>
   );
-} 
+}

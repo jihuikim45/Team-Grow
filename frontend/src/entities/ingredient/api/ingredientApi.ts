@@ -3,32 +3,43 @@ import { Ingredient } from '../model/types';
 
 export interface IngredientSearchResponse {
   items: Ingredient[];
-  next_cursor: number | null;
-  has_more: boolean;
+  nextPage: number | null;
+  hasMore: boolean;
+  total: number;
 }
 
 export const ingredientApi = {
   /**
-   * 성분 검색 (새 API - 커서 페이지네이션)
+   * 성분 검색 (페이지 기반 페이지네이션)
    */
   async search(
     query: string,
-    limit: number = 20,
-    cursor?: number
+    size: number = 20,
+    page: number = 1
   ): Promise<IngredientSearchResponse> {
     const params = new URLSearchParams({
       q: query,
-      limit: String(limit),
+      page: String(page),
+      size: String(size),
     });
-    if (cursor) {
-      params.append('cursor', String(cursor));
-    }
 
-    const response = await fetch(`${API_BASE}/ingredients/search?${params.toString()}`);
+    const response = await fetch(`${API_BASE}/search/ingredients?${params.toString()}`);
+
     if (!response.ok) {
       throw new Error('Failed to search ingredients');
     }
-    return response.json();
+
+    const data = await response.json();
+    const { results, total, page: currentPage, size: pageSize } = data;
+
+    const hasMore = currentPage * pageSize < total;
+
+    return {
+      items: results,
+      nextPage: hasMore ? currentPage + 1 : null,
+      hasMore,
+      total,
+    };
   },
 
   /**
